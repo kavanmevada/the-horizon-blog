@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Template</title>
+	<meta charset="UTF-8">
+	<meta content="width=device-width, initial-scale=1" name="viewport">
+	<link href="https://fonts.googleapis.com/css?family=Space+Mono&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Google+Sans:500,500i,800" rel="stylesheet">
+	<style>
+
+	      * {
+	         box-sizing: border-box;
+	         font-family: 'Space Mono', monospace;
+	      }
+
+
+	      #splashview-tagline {
+	         -webkit-box-orient: horizontal;
+	         max-width: 600px;
+	         margin: 0 auto;
+	         text-align: center;
+	         font-family: 'Space Mono', monospace;
+	         margin: 50px auto 90px auto;
+	      }
+
+	      #splashview-tagline h2 {
+	         font-size: 2.1em;
+	      }
+
+
+	      .blog-title {
+	       font-size: 1.5em;
+	       font-weight: 500;
+	      }
+
+
+
+	      .container {
+	       width: 100%;
+	       margin: 0 auto;
+	       padding: 0 15px;
+	      }
+
+	      @media (min-width: 576px) {
+	       .container {
+	         max-width: 540px;
+	       }
+	      }
+
+	      @media (min-width: 768px) {
+	       .container {
+	         max-width: 720px;
+	       }
+	      }
+
+	      @media (min-width: 992px) {
+	       .container {
+	         max-width: 960px;
+	       }
+	      }
+
+	      @media (min-width: 1200px) {
+	       .container {
+	         max-width: 1140px;
+	       }
+	      }
+
+	   @font-face {
+	    font-family: 'Product Sans';
+	    font-style: normal;
+	    font-weight: 400;
+	    src: local('Open Sans'), local('OpenSans'), url(https://fonts.gstatic.com/s/productsans/v5/HYvgU2fE2nRJvZ5JFAumwegdm0LZdjqr5-oayXSOefg.woff2) format('woff2');
+	   }
+
+
+	</style>
+</head>
+<body>
+	<div class="container">
+		<!-- Header -->
+		<div id="splashview-tagline">
+			<div>
+				<h2><span>Fedora Silverblue 30 'rpm-ostree' Guide</span></h2>
+			</div><span style="color: #a1a1a1;">Blog on fundamental guide for 'rpm-ostree' provided by fedora siverblue team.</span>
+		</div>
+		<p class="blog-title">Let's discuss what is 'os-tree'</p>
+		<p style="margin: 20px 0;"><span>rpm-ostree is a hybrid image/package system, which is inspired by git and containers. It's provide easiness in upgrade/rollback process. We expect most users will be interested in rpm-ostree on the client side, using it to replicate a base system, and possibly layer on additional packages, and use containers for applications.</span></p>
+
+<p class="blog-title">What problem is exist in current technology ?</p>
+		<p style="margin: 20px 0;"><span>As soon as one starts taking "snapshots" or keeping track of multiple roots, it uncovers many issues. For example, which content specifically is rolled forward or backwards? If the package manager isn't deeply aware of a snapshot tool, it's easy to lose coherency. Well this problem is nearly fixed by using multiple things like using yum with snapper or apt-get with BTRFS. 'rpm-ostree' is like having these two separate systems into one with more control over process.</span></p>
+
+<p style="margin: 20px 0;"><span>In this blog main focus is on how to use 'rpm-ostree'. So let's stop technical theoritical stuff and dive into it.</span></p>
+
+<p style="margin: 20px 0;"><span>There are three package types in 'rpm-ostree'</span></p>
+<p style="margin: 20px 0;"><span>1) Layeard packages -- User installed package from 'rpm-ostree' repo.</span></p>
+<p style="margin: 20px 0;"><span>2) Local packages -- User installed package from local rpm file.</span></p>
+<p style="margin: 20px 0;"><span>3) Base packages -- All preinstalled packages.</span></p>
+
+<p class="blog-title">Let me explain with example.</p>
+<p style="margin: 20px 0;"><span>Let's install simple chromium package</span></p>
+<p style="margin: 20px 0;"><span>First we want to inspect our current OSTree images</span></p>
+<p style="margin: 20px 0;"><span>$ atomic host status</span></p>
+
+<img alt="Mountains" src="https://miro.medium.com/max/1920/1*e-yZme_Shn55oqLXMS8_zA.png" style="width:100%; margin: 60px 0;">
+
+<p style="margin: 20px 0;"><span>
+On screenshot it seems I have two almost identical images. On the second I have Chromium installed already, so I could just boot on this, without need to reinstall</span></p>
+
+<p style="margin: 20px 0;"><span>Instead I will just remove the second image</span></p>
+
+<p style="margin: 20px 0;"><span>$ rpm-ostree cleanup -r</span></p>
+
+<img alt="Mountains" src="https://miro.medium.com/max/1920/1*gt05PRT5qpS5JloLFFq77A.png" style="width:100%; margin: 60px 0;">
+
+<p style="margin: 20px 0;"><span>
+Now I only have one OSTree image, I’m going to install Chromium from Fedora workstation repositories</span></p>
+
+<p style="margin: 20px 0;"><span>
+$ rpm-ostree install chromium
+
+<img alt="Mountains" src="https://miro.medium.com/max/1920/1*PhPE08wJriJOaXDP3qaD6g.png" style="width:100%; margin: 60px 0;">
+
+<p style="margin: 20px 0;"><span>
+After installing Chromium, it asks us to reboot the system, so it can mount the new image. At this point we cant’t run Chromium yet</span></p>
+
+
+<p style="margin: 20px 0;"><span>
+Lets check again on Atomic Host Status</span></p>
+
+<p style="margin: 20px 0;"><span>
+$ atomic host status</span></p>
+
+<img alt="Mountains" src="https://miro.medium.com/max/1920/1*-Faodd88XHqfDs-kpDqZ_w.png" style="width:100%; margin: 60px 0;">
+
+<p style="margin: 20px 0;"><span>
+Lets Reboot!</span></p>
+
+<p style="margin: 20px 0;"><span>
+When we reboot now, the bootloader will have three entries to boot to, so if we re-inspect our host, it is normal to see three images, including the one with the LiveCommit</span></p>
+
+<p style="margin: 20px 0;"><span>
+$ atomic host status</span></p>
+
+<img alt="Mountains" src="https://miro.medium.com/max/1920/1*cWttrwBxmh1-VVzfjE7r9Q.png" style="width:100%; margin: 60px 0;">
+
+<p style="margin: 20px 0;"><span>
+OSTree is a very Git inspired system, so we can rollback in every commit we want. For example we could do this</span></p>
+
+<p style="margin: 20px 0;"><span>
+$ atomic host deploy 97d52c1cf73e973736b3db92ac86d86e445b821ed0aac9ae07867fa6e48d9323</span></p>
+
+<p style="margin: 20px 0;"><span>
+But since everything works fine, I’m going to remove the two images, and save some space :p</span></p>
+
+<p style="margin: 20px 0;"><span>
+$ rpm-ostree cleanup -r</span></p>
+
+<p style="margin: 20px 0;"><span>
+It seems that removing the two images, it didn’t really save me a lot of space after all! This is yet another of the cool features of OSTree! It is not just Git inspired, but also BTRFS!</span></p>
+
+
+
+
+
+
+
+
+
+
+		<hr>
+		<div class="footer" style="padding:30px 0;">
+			<span style="font-size:0.8em;font-family: Product Sans;font-weight:600;">This is an</span><br>
+			<span style="font-size:1.4em;font-weight:500;font-family: Product Sans;">Open Source<br>
+			Project</span>
+		</div>
+	</div>
+</body>
+</html>
